@@ -1,2 +1,3 @@
-# pyqumo
-Queueing models implemented in Python
+# PyQumo - Queueing models in Python
+
+
