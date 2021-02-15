@@ -79,8 +79,7 @@ setup(
     tests_require=["pytest"],
     ext_modules=cythonize(
         extensions,
-        compiler_directives=compiler_directives,
-        annotate=True
+        compiler_directives=compiler_directives
     ),
     extras_require={
         "docs": ["sphinx", "sphinx-rtd-theme"]
