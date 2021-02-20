@@ -1,3 +1,4 @@
+-e pyqumo
 Cython==0.29.21
 matplotlib==3.3.4
 numpy==1.20.1
