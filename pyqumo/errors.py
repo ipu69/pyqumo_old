@@ -129,3 +129,7 @@ class RowsSumsError(MatrixError):
     def __init__(self, row_sums: ndarray, message: str):
         self.row_sums = row_sums
         super().__init__(f"{message}: {row_sums}")
+
+
+class BoundsError(Exception):
+    pass
