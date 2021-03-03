@@ -1,6 +1,35 @@
 import numpy as np
 
 
+def get_cv(m1: float, m2: float) -> float:
+    """Compute coefficient of variation.
+    """
+    return (m2 - m1**2)**0.5 / m1
+
+
+def get_skewness(m1: float, m2: float, m3: float) -> float:
+    """Compute skewness.
+    """
+    var = m2 - m1**2
+    std = var**0.5
+    return (m3 - 3*m1*var - m1**3) / (var * std)
+
+
+def get_noncentral_m3(mean: float, cv: float, skew: float) -> float:
+    """Compute non-central third moment if mean, CV and skew provided.
+    """
+    m1 = mean
+    std = cv * mean
+    var = std**2
+    return skew * var * std + 3 * m1 * var + m1**3
+
+
+def get_noncentral_m2(mean: float, cv: float) -> float:
+    """Compute non-central from the mean value and coef. of variation.
+    """
+    return (mean * cv)**2 + mean**2
+
+
 def moment(source, maxn=1, minn=1):
     """Computes moments from a given source.
 

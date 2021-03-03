@@ -3,8 +3,8 @@ import pytest
 from numpy.testing import assert_allclose
 
 from pyqumo.random import Const, Exponential, Uniform, Normal, Erlang, \
-    HyperExponential, PhaseType, Choice, SemiMarkovAbsorb, MixtureDistribution, \
-    CountableDistribution
+    HyperExponential, PhaseType, Choice, SemiMarkovAbsorb, \
+    MixtureDistribution, CountableDistribution, HyperErlang
 
 
 #
@@ -43,7 +43,7 @@ from pyqumo.random import Const, Exponential, Uniform, Normal, Erlang, \
     (Const(3), 3, 9, 27, 81, '(Const: value=3)', 1e-2, 2e-2),
     # Uniform distribution:
     (Uniform(0, 1), 0.5, 1/3, 1/4, 1/5, '(Uniform: a=0, b=1)', 1e-2, 2e-2),
-    (Uniform(2, 10), 6, 124/3, 312, 2499.2, '(Uniform: a=2, b=10)', 1e-2, 2e-2),
+    (Uniform(2, 10), 6, 124/3, 312, 2499.2, '(Uniform: a=2, b=10)', .01, .02),
     # Normal distribution:
     (Normal(0, 1), 0, 1, 0, 3, '(Normal: mean=0, std=1)', 1e-2, 2e-2),
     (
@@ -73,6 +73,19 @@ from pyqumo.random import Const, Exponential, Uniform, Normal, Erlang, \
         0.39167, 0.33194, 0.4475694, 0.837384,
         '(HyperExponential: probs=[0.5, 0.2, 0.3], rates=[2, 3, 4])',
         1e-2, 2e-2
+    ),
+    # Hypererlang distribution
+    (
+        HyperErlang([1], [1], [1]), 1, 2, 6, 24,
+        '(HyperErlang: probs=[1], shapes=[1], params=[1])',
+        1e-2, 2e-2
+    ),
+    (
+        HyperErlang(params=[1, 5, 8], shapes=[3, 4, 5], probs=[.2, .5, .3]),
+        1.1875, 2.941, 12.603, 72.795,
+        '(HyperErlang: probs=[0.2, 0.5, 0.3], shapes=[3, 4, 5], '
+        'params=[1, 5, 8])',
+        1e-2, 1e-2,
     ),
     # Phase-type distribution
     (
@@ -231,6 +244,14 @@ def test_common_props(dist, m1, m2, m3, m4, string, atol, rtol):
         HyperExponential(rates=[2, 3, 4], probs=[0.5, 0.2, 0.3]),
         [(0, 0.000), (0.25, 0.492), (0.5, 0.731), (1, 0.917)]
     ),
+    # Hyper-Erlang distribution
+    (
+        HyperErlang([1], [1], [1]),
+        [(0, 0.000), (1, 0.632), (2, 0.865), (3, 0.950)]
+    ), (
+        HyperErlang(params=[1, 5, 8], shapes=[3, 4, 5], probs=[.2, .5, .3]),
+        [(0, 0.000), (0.25, 0.035), (1, 0.654), (1.5, 0.806)]
+    ),
     # Phase-type distribution
     (
         PhaseType.exponential(1.0),
@@ -314,6 +335,15 @@ def test_gaussian_kde_cdf(dist, grid):
     ), (
         HyperExponential(rates=[2, 3, 4], probs=[0.5, 0.2, 0.3]),
         [(0, 2.800), (0.25, 1.331), (0.5, 0.664), (1, 0.187)]
+    ),
+    # Hyper-Erlang distribution
+    (
+        HyperErlang([1], [1], [1]),
+        [(0, 1.000), (1, 0.368), (2, 0.135), (3, 0.050)]
+    ),
+    (
+        HyperErlang(params=[1, 5, 8], shapes=[3, 4, 5], probs=[.2, .5, .3]),
+        [(0, 0), (0.25, 0.454), (1, 0.525), (1.5, 0.160)]
     ),
     # Phase-type distribution
     (
@@ -515,3 +545,53 @@ def test_hyperexponential_fit(avg, std, skew, order):
     assert_allclose(dist.mean, avg)
     assert_allclose(dist.std, std)
     assert dist.order == order
+
+
+#
+# VALIDATE CONVERTING TO PH (as_ph()) METHODS
+# ----------------------------------------------------------------------------
+@pytest.mark.parametrize('dist, s, p', [
+    (Exponential(2.0), [[-2.0]], [1.0]),
+    (Erlang(3, 7.0), [[-7, 7, 0], [0, -7, 7], [0, 0, -7]], [1, 0, 0]),
+    (HyperExponential([3.4, 4.2], [.3, .7]), [[-3.4, 0], [0, -4.2]], [.3, .7]),
+    (
+        HyperErlang([3.4, 4.2], [2, 3], [.2, .8]),
+        [[-3.4, 3.4, 0.0, 0.0, 0.0],
+         [0.0, -3.4, 0.0, 0.0, 0.0],
+         [0.0, 0.0, -4.2, 4.2, 0.0],
+         [0.0, 0.0, 0.0, -4.2, 4.2],
+         [0.0, 0.0, 0.0, 0.0, -4.2]],
+        [.2, 0, .8, 0, 0]
+    ),
+    # The following distribution will be casted since non-markovian
+    # state has very small probability < 1e-5:
+    (
+        MixtureDistribution([Exponential(1), Normal(10, 2)], [9.999999, 1e-6]),
+        [[-1]], [1.0]
+    )
+])
+def test__as_ph(dist, s, p):
+    comment = repr(dist)
+    ph = dist.as_ph()
+    assert_allclose(
+        ph.s, s,
+        err_msg=f"PH matrix mismatch for {comment}")
+    assert_allclose(
+        ph.init_probs, p,
+        err_msg=f"PH probs mismatch for {comment}")
+
+
+def test__as_ph__mixture_with_non_markovian_state_raise_runtime_error():
+    """
+    Validate that MixtureDistribution.as_ph() raises ValueError if one of
+    the states is not Markovian (e.g., normal or uniform distribution).
+    """
+    dist = MixtureDistribution(
+        [Exponential(1.0), Exponential(8.0), Normal(1.0, 0.5)],
+        weights=[0.495, 0.495, 0.01])
+    with pytest.raises(RuntimeError):
+        dist.as_ph()
+    # However, converting this distribution to PH with min_prob=0.1 is OK:
+    ph = dist.as_ph(min_prob=0.1)
+    assert_allclose(ph.s, [[-1, 0], [0, -8]])
+    assert_allclose(ph.p, [0.5, 0.5])
