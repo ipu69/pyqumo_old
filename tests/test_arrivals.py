@@ -8,6 +8,7 @@ from numpy.testing import assert_allclose
 from pyqumo import stats
 from pyqumo.arrivals import MarkovArrival, Poisson, \
     GIProcess
+from pyqumo.random import PhaseType
 
 
 #
@@ -125,55 +126,19 @@ def test_map__sampling(d0, d1):
     )
 
 
-# class TestMAP(ut.TestCase):
+@pytest.mark.parametrize('ph', [
+    PhaseType.exponential(5.0),
+    PhaseType.hyperexponential([1, 5, 20], [0.5, 0.2, 0.3]),
+    PhaseType.erlang(10, 0.2),
+])
+def test_map__build_from_ph(ph):
+    """Validate MAP construction from PH distribution.
+    """
+    assert isinstance(ph, PhaseType)
+    map_ = MarkovArrival.phase_type(ph.s, ph.p)
 
-#     def test_erlang_constructor(self):
-#         m1 = ar.MAP.erlang(1, 1.0)
-#         m2 = ar.MAP.erlang(2, 5.0)
-#         m3 = ar.MAP.erlang(3, 10.0)
-
-#         assert_allclose(m1.D0, [[-1.0]])
-#         assert_allclose(m1.D1, [[1.0]])
-#         assert_allclose(m2.D0, [[-5, 5], [0, -5]])
-#         assert_allclose(m2.D1, [[0, 0], [5, 0]])
-#         assert_allclose(m3.D0, [[-10, 10, 0], [0, -10, 10], [0, 0, -10]])
-#         assert_allclose(m3.D1, [[0, 0, 0], [0, 0, 0], [10, 0, 0]])
-
-#     def test_moments_like_erlang(self):
-#         e1 = Erlang(1, 1.0)
-#         e2 = Erlang(2, 5.0)
-#         e3 = Erlang(3, 10.0)
-#         m1 = ar.MAP.erlang(e1.shape, e1.rate)
-#         m2 = ar.MAP.erlang(e2.shape, e2.rate)
-#         m3 = ar.MAP.erlang(e3.shape, e3.rate)
-
-#         for k in range(10):
-#             self.assertAlmostEqual(m1.moment(k), e1.moment(k))
-#             self.assertAlmostEqual(m2.moment(k), e2.moment(k))
-#             self.assertAlmostEqual(m3.moment(k), e3.moment(k))
-
-#     # noinspection PyTypeChecker
-
-#     # noinspection PyTypeChecker
-#     def test_call(self):
-#         D0 = [
-#             [-99.0,  0.0,   0.0,   0.0],
-#             [0.0,  -99.0,  99.0,   0.0],
-#             [0.0,    0.0, -0.01,   0.0],
-#             [0.01,   0.0,   0.0, -0.01],
-#         ]
-#         D1 = [
-#             [98.0, 1.00, 0.000, 0.000],
-#             [0.00, 0.00, 0.000, 0.000],
-#             [0.00, 0.00, 0.009, 0.001],
-#             [0.00, 0.00, 0.000, 0.000],
-#         ]
-#         m = ar.MAP(D0, D1, check=True)
-#         NUM_SAMPLES = 1
-#         samples = [m() for _ in range(NUM_SAMPLES)]
-
-#         self.assertEqual(len(samples), NUM_SAMPLES)
-#         assert_allclose(np.mean(samples), m.mean(), rtol=0.1)
-#         assert_allclose(np.std(samples), m.std(), rtol=0.1)
-#         assert_allclose(np.var(samples), m.var(), rtol=0.1)
-#         assert_allclose(stats.lag(samples, 2), [m.lag(1), m.lag(2)], rtol=0.1)
+    assert isinstance(map_, MarkovArrival)
+    assert_allclose(map_.mean, ph.mean)
+    assert_allclose(map_.std, ph.std)
+    assert_allclose(map_.skewness, ph.skewness)
+    assert_allclose(map_.lag(1), 0.0, atol=1e-8)

@@ -7,8 +7,9 @@ import numpy as np
 from pyqumo.cqumo.randoms import Variable, RandomsFactory
 from pyqumo.chains import ContinuousTimeMarkovChain, DiscreteTimeMarkovChain
 from pyqumo.matrix import cbdiag, order_of, \
-    check_markovian_arrival, fix_markovian_arrival, str_array
-from pyqumo.random import Distribution, Exponential
+    check_markovian_arrival, fix_markovian_arrival, str_array, \
+    is_subinfinitesimal, is_pmf
+from pyqumo.random import Distribution, Exponential, PhaseType
 
 
 class RandomProcess(ABC, Distribution):
@@ -97,7 +98,7 @@ class GIProcess(RandomProcess):
     @cached_property
     def cv(self) -> float:
         return self._dist.std / self._dist.mean
-    
+
     @property
     def rnd(self) -> Variable:
         return self._dist.rnd
@@ -115,7 +116,7 @@ class GIProcess(RandomProcess):
         return GIProcess(self._dist.copy())
 
     def __repr__(self):
-        return f'(GI: f={self.dist})'    
+        return f'(GI: f={self.dist})'
 
 
 class Poisson(GIProcess):
@@ -238,7 +239,7 @@ class MarkovArrival(RandomProcess):
             safe=True
         )
         self._states = [
-            Exponential(rate, factory=factory) 
+            Exponential(rate, factory=factory)
             for rate in self._rates
         ]
 
@@ -295,6 +296,39 @@ class MarkovArrival(RandomProcess):
             Exponential distribution rate
         """
         return MarkovArrival([[-rate]], [[rate]])
+
+    @staticmethod
+    def phase_type(
+        s: Sequence[Sequence[float]],
+        p: Sequence[float]) -> 'MarkovArrival':
+        """
+        MAP representation of a PH distribution.
+
+        Parameters
+        ----------
+        s : square matrix
+            PH distribution generator (order NxN)
+        p : vector
+            PH distribution initial probabilities (order N)
+        """
+        if not isinstance(s, np.ndarray):
+            s = np.asarray(s)
+        if not isinstance(p, np.ndarray):
+            p = np.asarray(p)
+
+        # Validate:
+        order = order_of(s)
+        if order != order_of(p):
+            raise MatrixShapeError(f'({order},)', p.shape, 'PMF')
+        if not is_subinfinitesimal(s):
+            s = fix_infinitesimal(s, sub=True)
+        if not is_pmf(p):
+            p = fix_stochastic(p)
+
+        # Build:
+        d0 = s
+        d1 = (-s.dot(np.ones((order, 1)))).dot(p.reshape((1, order)))
+        return MarkovArrival(d0, d1)
 
     def copy(self) -> 'MarkovArrival':
         """
@@ -421,7 +455,7 @@ class MarkovArrival(RandomProcess):
     #         self._state = state
     #         intervals[n] = interval
     #     return intervals
-    
+
     def compose(self, other: 'MarkovArrival') -> 'MarkovArrival':
         # TODO:  write unit tests
         if not isinstance(other, MarkovArrival):
@@ -432,7 +466,7 @@ class MarkovArrival(RandomProcess):
         d0_out = np.kron(self.d0, other_eye) + np.kron(other.d0, self_eye)
         d1_out = np.kron(self.d1, other_eye) + np.kron(other.d1, self_eye)
         return MarkovArrival(d0_out, d1_out)
-    
+
     @lru_cache
     def _pow_dtmc_matrix(self, k):
         if k == 0:
