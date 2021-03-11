@@ -892,6 +892,12 @@ class PhaseType(ContinuousDistributionMixin,
     def sni(self) -> np.ndarray:
         return self._sni
 
+    def scale(self, k: float) -> 'PhaseType':
+        """
+        Get new PH distribution with mean = (this PH).mean x K.
+        """
+        return PhaseType(self.s / k, self.p, safe=True)
+
     @lru_cache
     def _moment(self, n: int) -> float:
         sni_powered = np.linalg.matrix_power(self.sni, n)

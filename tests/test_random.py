@@ -595,3 +595,20 @@ def test__as_ph__mixture_with_non_markovian_state_raise_runtime_error():
     ph = dist.as_ph(min_prob=0.1)
     assert_allclose(ph.s, [[-1, 0], [0, -8]])
     assert_allclose(ph.p, [0.5, 0.5])
+
+
+@pytest.mark.parametrize('ph, k', [
+    (PhaseType.exponential(1), 2),
+    (PhaseType.exponential(1), 0.1),
+    (PhaseType.erlang(10, 2), 42),
+    (PhaseType.hyperexponential([10, 5, 200], [0.3, 0.4, 0.3]), 0.34),
+])
+def test_phase_type__scale(ph, k):
+    """
+    Validate PhaseType.scale() method returns a new PhaseType with mean
+    m1' = m1 * k.
+    """
+    new_ph = ph.scale(k)
+    assert_allclose(new_ph.mean, ph.mean * k, rtol=1e-6)
+    assert_allclose(new_ph.cv, ph.cv, rtol=1e-6)  # the same CV
+    assert_allclose(new_ph.skewness, ph.skewness, rtol=1e-6)  # the same skew

@@ -335,6 +335,12 @@ class MarkovArrival(RandomProcess):
     def order(self) -> int:
         return self._order
 
+    def scale(self, k) -> 'MarkovArrival':
+        """
+        Get a new MAP with mean = (this MAP) x K.
+        """
+        return MarkovArrival(self.d0 / k, self.d1 / k)
+
     @lru_cache
     def d0n(self, k: int) -> np.ndarray:
         """

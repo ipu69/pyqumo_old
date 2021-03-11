@@ -141,3 +141,23 @@ def test_map__build_from_ph(ph):
     assert_allclose(map_.std, ph.std)
     assert_allclose(map_.skewness, ph.skewness)
     assert_allclose(map_.lag(1), 0.0, atol=1e-8)
+
+
+@pytest.mark.parametrize('map_, k', [
+    (MarkovArrival.poisson(5), 0.1),
+    (MarkovArrival.poisson(5), 10),
+    (MarkovArrival.erlang(10, 2), 42),
+])
+def test_map__scale(map_, k):
+    """
+    Validate MAP scale() method: it should keep CV and skew, but scale mean.
+    """
+    new_map = map_.scale(k)
+
+    # Mean becomes equal to original mean mult. by k:
+    assert_allclose(new_map.mean, map_.mean * k, rtol=1e-6)
+
+    # CV, skew and lag(1) keep the same:
+    assert_allclose(new_map.cv, map_.cv, rtol=1e-6)
+    assert_allclose(new_map.skewness, map_.skewness, rtol=1e-6)
+    assert_allclose(new_map.lag(1), map_.lag(1), atol=1e-8)
