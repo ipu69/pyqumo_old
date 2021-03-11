@@ -8,8 +8,9 @@ from pyqumo.cqumo.randoms import Variable, RandomsFactory
 from pyqumo.chains import ContinuousTimeMarkovChain, DiscreteTimeMarkovChain
 from pyqumo.matrix import cbdiag, order_of, \
     check_markovian_arrival, fix_markovian_arrival, str_array, \
-    is_subinfinitesimal, is_pmf
-from pyqumo.random import Distribution, Exponential, PhaseType
+    is_subinfinitesimal, is_pmf, fix_infinitesimal, fix_stochastic
+from pyqumo.random import Distribution, Exponential
+from pyqumo.errors import MatrixShapeError
 
 
 class RandomProcess(ABC, Distribution):
@@ -214,20 +215,8 @@ class MarkovArrival(RandomProcess):
         # Since we will use Mmap for data generation, we need to generate
         # special matrices for transitions probabilities and rates.
 
-        # 1) We need to store rates (we will use them when choosing random
-        #    time we spend in the state):
+        # Store rates:
         self._rates = -self._matrices[0].diagonal()
-
-        # 2) Then, we need to store cumulative transition probabilities P.
-        #    We store them in a stochastic matrix of shape N x (K*N):
-        #      P[I, J] is a probability, that:
-        #      - new state will be J (mod N), and
-        #      - if J < N, then no packet is generated, or
-        #      - if J >= N, then packet of type J // N is generated.
-        # self._trans_pmf = np.hstack((
-        #     self._matrices[0] + np.diag(self._rates),
-        #     self._matrices[1]
-        # )) / self._rates[:, None]
 
         # Build embedded DTMC and CTMC:
         self._ctmc = ContinuousTimeMarkovChain(
@@ -242,28 +231,6 @@ class MarkovArrival(RandomProcess):
             Exponential(rate, factory=factory)
             for rate in self._rates
         ]
-
-        # Define random variables generators:
-        # -----------------------------------
-        # - random generators for time in each state:
-        # self.__rate_rnd = [
-        #     Rnd(lambda n, r=r: np.random.exponential(1/r, size=n))
-        #     for r in self._rates
-        # ]
-        #
-        # # - random generators of state transitions:
-        # n_trans = self._order * len(self._matrices)
-        # self.__trans_rnd = [
-        #     Rnd(lambda n, p0=p: np.random.choice(
-        #         np.arange(n_trans), p=p0, size=n))
-        #     for p in self._trans_pmf
-        # ]
-        #
-        # # Since we have the initial distribution, we find the initial state:
-        # self._state = np.random.choice(
-        #     np.arange(self._order),
-        #     p=self._dtmc.steady_pmf
-        # )
 
     @staticmethod
     def erlang(shape: int, rate: float) -> 'MarkovArrival':
@@ -299,8 +266,8 @@ class MarkovArrival(RandomProcess):
 
     @staticmethod
     def phase_type(
-        s: Sequence[Sequence[float]],
-        p: Sequence[float]) -> 'MarkovArrival':
+            s: Sequence[Sequence[float]],
+            p: Sequence[float]) -> 'MarkovArrival':
         """
         MAP representation of a PH distribution.
 
@@ -385,7 +352,7 @@ class MarkovArrival(RandomProcess):
     @lru_cache
     def _moment(self, n: int) -> float:
         pi = self.dtmc.steady_pmf
-        x = np.math.factorial(n) * pi.dot(self.d0n(-n)).dot(np.ones(self.order))
+        x = np.math.factorial(n)*pi.dot(self.d0n(-n)).dot(np.ones(self.order))
         return x.item()
 
     @lru_cache
@@ -427,7 +394,7 @@ class MarkovArrival(RandomProcess):
 
     @cached_property
     def rnd(self) -> Variable:
-        # 2) Then, we need to store cumulative transition probabilities P.
+        # We need to store cumulative transition probabilities P.
         #    We store them in a stochastic matrix of shape N x (K*N):
         #      P[I, J] is a probability, that:
         #      - new state will be J (mod N), and
@@ -440,21 +407,6 @@ class MarkovArrival(RandomProcess):
         )) / self._rates[:, None]
         return self.factory.createSemiMarkovArrivalVariable(
             vars, self.dtmc.steady_pmf, trans_pmf)
-
-    # def _eval(self, size: int) -> np.ndarray:
-    #     intervals = np.zeros(size)
-    #     for n in range(size):
-    #         pkt_type = 0
-    #         interval = 0.0
-    #         # print('> start in state ', self._state)
-    #         state = self._state
-    #         while pkt_type == 0:
-    #             interval += self.__rate_rnd[state]()
-    #             j = int(self.__trans_rnd[state]())
-    #             pkt_type, state = divmod(j, self._order)
-    #         self._state = state
-    #         intervals[n] = interval
-    #     return intervals
 
     def compose(self, other: 'MarkovArrival') -> 'MarkovArrival':
         # TODO:  write unit tests

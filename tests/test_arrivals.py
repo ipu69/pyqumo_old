@@ -42,7 +42,6 @@ def test__props(proc, m1, m2, m3, l1, string):
     Validate basic statistical properties of the random process.
     """
     # Compute basic props:
-    rate = 1 / m1
     var = m2 - m1**2
     std = var**0.5
     cv = std / m1
