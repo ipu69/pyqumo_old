@@ -1,4 +1,4 @@
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 from Cython.Build import cythonize
 import os
 
@@ -50,6 +50,7 @@ def readme():
 setup(
     name='pyqumo',
     version='1.0.1',
+    packages=find_packages(),
     description='Queueing Models in Python',
     long_description=readme(),
     classifiers=[
@@ -63,8 +64,8 @@ setup(
     author='Andrey Larionov',
     author_email='larioandr@gmail.com',
     license='MIT',
-    packages=['pyqumo'],
-    py_modules=['pyqumo'],
+#     packages=['pyqumo'],
+#     py_modules=['pyqumo'],
     scripts=[],
     python_requires=">=3.8",
     install_requires=[
