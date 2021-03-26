@@ -50,7 +50,7 @@ def readme():
 setup(
     name='pyqumo',
     version='1.0.1',
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests",]),
     description='Queueing Models in Python',
     long_description=readme(),
     classifiers=[
