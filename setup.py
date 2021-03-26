@@ -49,7 +49,7 @@ def readme():
 
 setup(
     name='pyqumo',
-    version='1.0',
+    version='1.0.1',
     description='Queueing Models in Python',
     long_description=readme(),
     classifiers=[
