@@ -1,5 +1,10 @@
 import numpy as np
 
+def get_std(m1: float, m2: float) -> float:
+    """Compute coefficient of variation.
+    """
+    return (m2 - m1**2)**0.5
+
 
 def get_cv(m1: float, m2: float) -> float:
     """Compute coefficient of variation.
