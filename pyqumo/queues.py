@@ -64,10 +64,15 @@ class BasicQueueingSystem:
         moments = []
         if m1 is not None:
             moments = [m1, var + m1**2] if var is not None else [m1]
-        return CountableDistribution(
-            self.get_system_size_prob,
-            precision=self._precision,
-            moments=moments)
+        try:
+            return CountableDistribution(
+                self.get_system_size_prob,
+                # precision=self._precision,
+                precision=1e-3,
+                moments=moments)
+        except KeyboardInterrupt as ex:
+            print(self.get_system_size_prob)
+            raise KeyboardInterrupt from ex
 
     @cached_property
     def queue_size(self) -> CountableDistribution:
@@ -283,8 +288,8 @@ class MapPh1NQueue(BasicQueueingSystem):
                  arrival: MarkovArrival,
                  service: PhaseType,
                  queue_capacity: int):
-        if abs(np.math.modf(queue_capacity)[0]) > 1e-12 or queue_capacity <= 0:
-            raise ValueError(f"positive integer expected, "
+        if abs(np.modf(queue_capacity)[0]) > 1e-12 or queue_capacity < 0:
+            raise ValueError(f"non-negative integer expected, "
                              f"but {queue_capacity} found")
         super().__init__(arrival, GIProcess(service), 
                          queue_capacity=queue_capacity, precision=1e-20)

@@ -817,9 +817,9 @@ class PhaseType(ContinuousDistributionMixin,
             if (sub_order := order_of(sub)) != order_of(p):
                 raise MatrixShapeError(f'({sub_order},)', p.shape, 'PMF')
             if not is_subinfinitesimal(sub):
-                sub = fix_infinitesimal(sub, sub=True)
+                sub = fix_infinitesimal(sub, sub=True)[0]
             if not is_pmf(p):
-                p = fix_stochastic(p)
+                p = fix_stochastic(p)[0]
 
         # Store data in fields:
         # ---------------------

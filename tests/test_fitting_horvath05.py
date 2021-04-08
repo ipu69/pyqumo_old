@@ -67,3 +67,7 @@ def test_fit_map_horvath05():
     assert_allclose(actual_lag1, expected_lag1, rtol=.05)
     assert_allclose(errors[0], abs(actual_lag1 - expected_lag1) / actual_lag1,
                     atol=.01, rtol=.01)
+
+    assert_allclose(ph.mean, markov_arrival.mean, rtol=.01)
+    assert_allclose(ph.cv, markov_arrival.cv, rtol=.01)
+    assert_allclose(ph.skewness, markov_arrival.skewness, rtol=.01)

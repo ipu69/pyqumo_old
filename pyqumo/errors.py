@@ -21,8 +21,8 @@ class MatrixShapeError(MatrixError):
     label : str, optional
         typically, name of the matrix
     """
-    def __init__(self, expected: Union[Tuple[int, int], str],
-                 shape: Tuple[int, int], label: str = ""):
+    def __init__(self, expected: Union[Tuple[int, ...], str],
+                 shape: Tuple[int, ...], label: str = ""):
         self.expected = expected
         self.shape = shape
         self.label = label
