@@ -36,7 +36,8 @@ import numpy as np
 def fit_map_horvath05(
         ph: PhaseType,
         lag1: float = 0.,
-        n_iters: int = 3) -> Tuple[MarkovArrival, np.ndarray]:
+        n_iters: int = 3,
+        tol: float = .01) -> Tuple[MarkovArrival, np.ndarray]:
     """
     Fit Markov arrival process using approach from [1].
 
@@ -48,17 +49,20 @@ def fit_map_horvath05(
     ----------
     ph : PhaseType
         stationary distribution of the
-    lag1
-    n_iters
+    lag1 : float, optional (default: 0.0)
+    n_iters : int, optional (default: 3)
+    tol: float, optional (default: .01)
+        this is the tolerance that is used to validate MAP D0 and D1
 
     Returns
     -------
-
+    arrival: MarkovArrival
+    errors: ndarray
     """
     m = ph.order
     opt_ret = optimize_lag1(ph, optype='opt', lag1=lag1, n_iters=n_iters)
     d1 = opt_ret.x.reshape((m, m)).T
-    markov_arrival = MarkovArrival(ph.s, d1)
+    markov_arrival = MarkovArrival(ph.s, d1, tol=tol)
     lags = [lag1]
     abs_lags = [abs(lag) for lag in lags]
     errors = [

@@ -1,6 +1,14 @@
 import numpy as np
 
 
+def rel_err(expected, actual):
+    """Get relative error between of two values.
+    """
+    if abs(expected) < 1e-10:
+        return abs(actual)
+    return abs(expected - actual) / abs(expected)
+
+
 def get_cv(m1: float, m2: float) -> float:
     """Compute coefficient of variation.
     """

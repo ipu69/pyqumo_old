@@ -809,7 +809,7 @@ class PhaseType(ContinuousDistributionMixin,
     less efficient then custom implementations.
     """
     def __init__(self, sub: np.ndarray, p: np.ndarray, safe: bool = False,
-                 factory: RandomsFactory = None):
+                 factory: RandomsFactory = None, tol: float = 1e-3):
         super().__init__(factory)
         # Validate and fix data:
         # ----------------------
@@ -817,9 +817,9 @@ class PhaseType(ContinuousDistributionMixin,
             if (sub_order := order_of(sub)) != order_of(p):
                 raise MatrixShapeError(f'({sub_order},)', p.shape, 'PMF')
             if not is_subinfinitesimal(sub):
-                sub = fix_infinitesimal(sub, sub=True)[0]
+                sub = fix_infinitesimal(sub, sub=True, tol=tol)[0]
             if not is_pmf(p):
-                p = fix_stochastic(p)[0]
+                p = fix_stochastic(p, tol=tol)[0]
 
         # Store data in fields:
         # ---------------------

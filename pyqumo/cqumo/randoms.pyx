@@ -41,16 +41,16 @@ cdef class RandomsFactory:
 
     def __init__(self):
         self.randoms = new Randoms()
-    
+
     def __dealloc__(self):
         del self.randoms
-    
+
     def createConstantVariable(self, value):
         cdef CxxRandomVariable *c_var = self.randoms.createConstant(value)
         var = Variable()
         var.set_variable(c_var)
         return var
-    
+
     def createExponentialVariable(self, rate):
         cdef CxxRandomVariable *c_var = self.randoms.createExponential(rate)
         var = Variable()
@@ -62,7 +62,7 @@ cdef class RandomsFactory:
         var = Variable()
         var.set_variable(c_var)
         return var
-    
+
     def createUniformVariable(self, a, b):
         cdef CxxRandomVariable *c_var = self.randoms.createUniform(a, b)
         var = Variable()
@@ -77,13 +77,13 @@ cdef class RandomsFactory:
         var = Variable()
         var.set_variable(c_var)
         return var
-    
+
     def createErlangVariable(self, shape, param):
         cdef CxxRandomVariable *c_var = self.randoms.createErlang(shape, param)
         var = Variable()
         var.set_variable(c_var)
         return var
-    
+
     def createMixtureVariable(self, vars, weights):
         cdef vector[CxxRandomVariable*] _vars
         cdef vector[double] _weights = weights
@@ -97,7 +97,7 @@ cdef class RandomsFactory:
         ret_var = Variable()
         ret_var.set_variable(c_var)
         return ret_var
-    
+
     def createAbsorbSemiMarkovVariable(self, vars, p0, trans, absorb_state):
         cdef vector[CxxRandomVariable*] c_vars
         cdef vector[double] c_initProbs = p0
@@ -110,7 +110,7 @@ cdef class RandomsFactory:
                 classname = f"{Variable.__module__}.{Variable.__name__}"
                 raise RuntimeError(f"var type {type(var)} is not {classname}")
             c_vars.push_back((<Variable>var).get_variable())
-        
+
         cdef CxxRandomVariable *c_ret_var = \
             self.randoms.createAbsorbSemiMarkov(
                 c_vars, c_initProbs, c_trans, c_absorbState
@@ -118,14 +118,14 @@ cdef class RandomsFactory:
         result = Variable()
         result.set_variable(c_ret_var)
         return result
-    
+
     def createChoiceVariable(self, values, weights):
         cdef CxxRandomVariable *c_var = \
             self.randoms.createChoice(values, weights)
         var = Variable()
         var.set_variable(c_var)
         return var
-    
+
     def createSemiMarkovArrivalVariable(self, vars, p0, all_trans_probs):
         cdef vector[CxxRandomVariable*] c_vars
         cdef vector[double] c_initProbs = p0
@@ -137,7 +137,7 @@ cdef class RandomsFactory:
                 classname = f"{Variable.__module__}.{Variable.__name__}"
                 raise RuntimeError(f"var type {type(var)} is not {classname}")
             c_vars.push_back((<Variable>var).get_variable())
-        
+
         cdef CxxRandomVariable *c_ret_var = \
             self.randoms.createSemiMarkovArrival(
                 c_vars, c_initProbs, c_allTransProbs)
@@ -154,13 +154,13 @@ cdef class Variable:
 
     def __dealloc__(self):
         del self.variable
-    
+
     cdef set_variable(self, CxxRandomVariable *variable):
         self.variable = variable
 
     cdef CxxRandomVariable *get_variable(self):
         return self.variable
-    
+
     cpdef eval(self):
         return self.variable.eval()
 
