@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from time import perf_counter
 from typing import Dict, Optional, Callable
 
-from pyqumo import MarkovArrival, PhaseType, rel_err, MapPh1NQueue
+from pyqumo import MarkovArrival, PhaseType, rel_err, MapPh1NQueue, BoundsError
+from pyqumo.fitting import fit_acph2, fit_mern2, fit_map_horvath05
 
 
 def get_complexity(arrival_order: int, service_order: int, capacity: int,
@@ -150,3 +151,25 @@ def solve_iterative(
     # Замеряем время завершения
     solution.elapsed = perf_counter() - t_start
     return solution
+
+
+def reduce_map(
+        departure: MarkovArrival,
+        use_lag: bool,
+        only_mean: bool) -> MarkovArrival:
+    mean = departure.mean
+    if only_mean:
+        ph = PhaseType.exponential(1 / mean)
+    else:
+        moments = [departure.moment(i) for i in range(1, 4)]
+        try:
+            ph = fit_acph2(moments, strict=True)[0]
+        except BoundsError:
+            dist = fit_mern2(moments, strict=False)[0]
+            ph = dist.as_ph()
+    # Fit lag, if needed:
+    if use_lag:
+        arrival = fit_map_horvath05(ph, departure.lag(1))[0]
+    else:
+        arrival = MarkovArrival.phase_type(ph.s, ph.p)
+    return arrival
