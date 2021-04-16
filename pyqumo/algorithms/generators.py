@@ -40,7 +40,7 @@ def random_phase_type(
     ])
     try:
         dist = fit_acph2(moments, strict=True)[0]
-    except BoundsError:
+    except (BoundsError, ZeroDivisionError):
         dist = fit_mern2(moments, strict=False, max_shape_inc=1)[0]
 
         # If order is too large, we won't try to tune CV or skew.

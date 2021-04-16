@@ -79,7 +79,7 @@ class DiscreteTimeMarkovChain:
             right_side_ = right_side[1:]
             return np.linalg.solve(left_side_, right_side_)
         except np.linalg.LinAlgError:
-            return np.linalg.lstsq(left_side, right_side)[0]
+            return np.linalg.lstsq(left_side, right_side, rcond=-1)[0]
 
     def trace(self, size: Optional[int] = None,
               init: Union[int, Sequence[float], None] = None,
@@ -261,7 +261,7 @@ class ContinuousTimeMarkovChain:
             right_side_ = right_side[1:]
             return np.linalg.solve(left_side_, right_side_)
         except np.linalg.LinAlgError:
-            return np.linalg.lstsq(left_side, right_side)[0]
+            return np.linalg.lstsq(left_side, right_side, rcond=-1)[0]
 
     def trace(self, size: Optional[int] = None,
               init: Union[int, Sequence[float], None] = None,
