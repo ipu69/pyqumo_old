@@ -1,6 +1,5 @@
 import multiprocessing
 from itertools import product
-from typing import Optional, Dict, Any, List
 
 import pebble
 from concurrent.futures import TimeoutError
@@ -189,8 +188,6 @@ def simtime(file_name, output_file_name, precise, tol, num_samples,
     result_df = pd.DataFrame(result_data)
 
     save_data(result_df, output_file_name)
-
-
 
 
 @cli.command()
