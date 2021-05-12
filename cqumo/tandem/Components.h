@@ -376,7 +376,7 @@ Network *buildOneHopeNetwork(
         int queueCapacity);
 
 Network *buildTandemNetwork(
-    const DblFn& arrival,
+    const std::map<int,DblFn>& arrivals,
     const std::vector<DblFn>& services,
     int queueCapacity,
     bool fixedService = false);

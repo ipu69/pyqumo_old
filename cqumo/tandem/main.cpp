@@ -12,14 +12,14 @@ using namespace cqumo;
 
 const char *FORMAT =
         "Format: cqumo_tandem <NUM_STATIONS> <ARRIVAL_RATE> <SERVICE_RATE> "
-        "<QUEUE_CAPACITY> <IS_FIXED_SERVICE> [NUM_PACKETS]";
+        "<QUEUE_CAPACITY> <IS_FIXED_SERVICE> <HAS_CT> [NUM_PACKETS]";
 
 
 void printResults(const SimData& data);
 
 int main(int argc, char **argv) {
     // Parse mandatory parameters
-    if (argc < 6 || argc > 7) {
+    if (argc < 7 || argc > 8) {
         cout << FORMAT << endl;
         return 1;
     }
@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
     double serviceRate = stod(argv[3]);
     int queueCapacityInt = stoi(argv[4]);
     bool isFixedService = bool(stoi(argv[5]));
+    bool hasCrossTraffic = bool(stoi(argv[6]));
 
     if (queueCapacityInt < 0) {
         cout << "ERROR: queue capacity_ must be non-negative\n";
@@ -41,8 +42,9 @@ int main(int argc, char **argv) {
 
     // Check whether number of packets were provided:
     size_t maxPackets = 10000;
-    if (argc == 5) {
-        int maxPackets_ = stoi(argv[4]);
+    cout << "argc = " << argc << endl;
+    if (argc == 8) {
+        int maxPackets_ = stoi(argv[7]);
         if (maxPackets_ <= 0) {
             cerr << "ERROR: number of packets must be positive\n";
             return 1;
@@ -57,9 +59,16 @@ int main(int argc, char **argv) {
     DblFn arrivalFn = [&arrivalVar](){ return arrivalVar->eval(); };
     DblFn serviceFn = [&serviceVar](){ return serviceVar->eval(); };
     vector<DblFn> services(numStations, serviceFn);
+    map<int,DblFn> arrivals;
+    arrivals[0] = arrivalFn;
+    if (hasCrossTraffic) {
+        for (int i = 1; i < numStations; i++) {
+            arrivals[i] = arrivalFn;
+        }
+    }
 
     auto ret = simTandem(
-            arrivalFn,
+            arrivals,
             services,
             queueCapacity,
             isFixedService,
@@ -83,14 +92,9 @@ void printResults(const SimData& data) {
         "Wait t.", "Resp. t.", "Loss prob."
         };
     auto widths = std::vector<int>(headers.size(), 0);
-    cout << "| ";
     for (int i = 0; i < (int)headers.size(); i++) {
-        auto& header = headers[i];
-        int width = max((int)header.size(), 5);
-        widths[i] = width;
-        cout << left << setw(width) << header << " | ";
+        widths[i] = max((int)headers[i].size(), 5);
     }
-    cout << endl;
 
     auto writeLine = [&widths]() {
         cout << "+";
@@ -102,18 +106,26 @@ void printResults(const SimData& data) {
 
     writeLine();
 
+    cout << "| ";
+    for (int i = 0; i < (int)headers.size(); i++) {
+        cout << left << setw(widths[i]) << headers[i] << " | ";
+    }
+    cout << endl;
+
+    writeLine();
+
     int numNodes = data.nodeData.size();
     for (int i = 0; i < numNodes; i++) {
         auto& nd = data.nodeData.at(i);
         cout << "| " << left << setw(widths[0]) << (i+1) << " | "
-            << setw(widths[1]) << setprecision(3) << nd.systemSize.mean() << " | "
-            << setw(widths[2]) << setprecision(3) << nd.queueSize.mean() << " | "
-            << setw(widths[3]) << setprecision(3) << nd.serverSize.mean() << " | "
-            << setw(widths[4]) << setprecision(3) << nd.delays.mean << " | "
-            << setw(widths[5]) << setprecision(3) << nd.departures.mean << " | "
-            << setw(widths[6]) << setprecision(3) << nd.waitTime.mean << " | "
-            << setw(widths[7]) << setprecision(3) << nd.responseTime.mean << " | "
-            << setw(widths[8]) << setprecision(3) << nd.lossProb << " |" << endl;
+            << setw(widths[1]) << setprecision(2) << nd.systemSize.mean() << " | "
+            << setw(widths[2]) << setprecision(2) << nd.queueSize.mean() << " | "
+            << setw(widths[3]) << setprecision(2) << nd.serverSize.mean() << " | "
+            << setw(widths[4]) << setprecision(2) << nd.delays.mean << " | "
+            << setw(widths[5]) << setprecision(2) << nd.departures.mean << " | "
+            << setw(widths[6]) << setprecision(2) << nd.waitTime.mean << " | "
+            << setw(widths[7]) << setprecision(2) << nd.responseTime.mean << " | "
+            << setw(widths[8]) << setprecision(2) << nd.lossProb << " |" << endl;
     }
 
     writeLine();
