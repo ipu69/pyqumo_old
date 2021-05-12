@@ -91,7 +91,15 @@ void startService(
 
     // Start service and schedule end:
     server->push(packet);
-    double interval = server->interval();
+    double interval;
+    if (server->fixedService() && packet->servedOnce()) {
+        interval = packet->firstServiceTime();
+    } else {
+        interval = server->interval();
+        if (!packet->servedOnce()) {
+            packet->setFirstServiceTime(interval);
+        }
+    }
     system->schedule(SERVER_TIMEOUT, interval, address);
     debug("\t- scheduled service end at %.3f (interval = %.3f)\n",
           time + interval, interval);

@@ -1,3 +1,4 @@
+from libcpp cimport bool
 from libcpp.vector cimport vector
 from libcpp.map cimport map
 from libcpp.functional cimport function
@@ -61,9 +62,10 @@ cdef extern from "Simulation.h" namespace "cqumo":
             DblFn service,
             int queueCapacity,
             int maxPackets)
-    
+
     SimData simTandem(
             DblFn arrival,
             vector[DblFn]& services,
             int queueCapacity,
+            bool fixedService,
             int maxPackets)

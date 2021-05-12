@@ -69,7 +69,8 @@ std::string Queue::toString() const {
 
 // Class Server
 // --------------------------------------------------------------------------
-Server::Server(const DblFn& intervals) : intervals_(intervals)
+Server::Server(const DblFn& intervals, bool fixedService)
+: intervals_(intervals), fixedService_(fixedService)
 {} // NOLINT(modernize-pass-by-value)
 
 Server::~Server() {
@@ -203,12 +204,13 @@ Network *buildOneHopeNetwork(
 Network *buildTandemNetwork(
         const DblFn& arrival,
         const std::vector<DblFn>& services,
-        int queueCapacity) {
+        int queueCapacity,
+        bool fixedService) {
     auto network = new Network;
     int numNodes = static_cast<int>(services.size());
     for (int i = 0; i < static_cast<int>(services.size()); ++i){
         auto queue = new Queue(queueCapacity);
-        auto server = new Server(services[i]);
+        auto server = new Server(services[i], fixedService);
         auto source = i == 0 ? new Source(arrival, numNodes - 1) : nullptr;
         auto node = new Node(i, queue, server, source);
         network->addNode(node);

@@ -122,9 +122,11 @@ SimData simTandem(
         DblFn arrival,
         const std::vector<DblFn>& services,
         int queueCapacity,
+        bool fixedService,
         int maxPackets) {
     auto startedAt = std::chrono::system_clock::now();
-    auto network = buildTandemNetwork(arrival, services, queueCapacity);
+    auto network = buildTandemNetwork(
+        arrival, services, queueCapacity, fixedService);
     auto journal = new NetworkJournal;
     for (auto &addrNodePair: network->nodes()) {
         journal->addNodeJournal(addrNodePair.second);

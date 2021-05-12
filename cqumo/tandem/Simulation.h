@@ -166,6 +166,7 @@ SimData simTandem(
     DblFn arrival,
     const std::vector<DblFn>& services,
     int queueCapacity = -1,
+    bool fixedService = false,
     int maxPackets = MAX_PACKETS);
 
 }

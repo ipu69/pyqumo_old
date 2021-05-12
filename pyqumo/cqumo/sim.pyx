@@ -98,6 +98,7 @@ cdef call_simTandem(
         void* pyArrival,
         vector[void*] pyServices,
         int queue_capacity,
+        bool fixed_service,
         int max_packets):
     cdef DblFn cArrival = makeDblFn(_call_pyobject, pyArrival)
     cdef vector[DblFn] cServices
@@ -105,7 +106,7 @@ cdef call_simTandem(
     for i in range(pyServices.size()):
         cServices.push_back(makeDblFn(_call_pyobject, pyServices[i]))
     cdef SimData c_ret = simTandem(
-        cArrival, cServices, queue_capacity, max_packets)
+        cArrival, cServices, queue_capacity, fixed_service, max_packets)
     return _build_tandem_results(c_ret, pyServices.size())
 
 def simulate_mm1n(
@@ -170,6 +171,7 @@ def simulate_tandem(
         arrival,
         services,
         queue_capacity: int,
+        fixed_service: bool = False,
         max_packets: int = 100000
 ) -> TandemResults:
     """
@@ -178,8 +180,8 @@ def simulate_tandem(
     Example
     -------
     >>> simulate_tandem(
-    >>>     Erlang(2, 1), 
-    >>>     [Exponential(5), Exponential(6), Exponential(3)], 
+    >>>     Erlang(2, 1),
+    >>>     [Exponential(5), Exponential(6), Exponential(3)],
     >>>     10,  # queue capacity
     >>>     1000000)  # number of packets (1 million)
 
@@ -191,7 +193,8 @@ def simulate_tandem(
     services : list of Distribution instances, this list size is the number
         of nodes in the tandem network
     queue_capacity: int or np.inf
-    max_packets: 
+    fixed_service: bool, default is False
+    max_packets:
     """
     cdef void* pyArrival = <void*>arrival.rnd
     cdef vector[void*] pyServices
@@ -200,4 +203,5 @@ def simulate_tandem(
         pyServices.push_back(<void*>services[i].rnd)
     if queue_capacity == np.inf:
         queue_capacity = -1
-    return call_simTandem(pyArrival, pyServices, queue_capacity, max_packets)
+    return call_simTandem(pyArrival, pyServices, queue_capacity,
+                          fixed_service, max_packets)
