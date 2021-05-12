@@ -64,6 +64,18 @@ class Packet : public Object {
     /** Set model time when the packet_ arrived at current node. */
     inline void setArrivedAt(double time) { arrivedAt_ = time; }
 
+    /** Get the first-time service duration. */
+    inline double firstServiceTime() const { return firstServiceTime_; }
+
+    /** Get flag indicating the first-time service duration was set. */
+    inline bool servedOnce() const { return servedOnce_; }
+
+    /** Set first-time service duration. */
+    inline void setFirstServiceTime(double v) {
+      firstServiceTime_ = v;
+      servedOnce_ = true;
+    }
+
     /** Get string representation of the packet_. */
     std::string toString() const override;
 
@@ -72,6 +84,8 @@ class Packet : public Object {
     int target_;
     double createdAt_;
     double arrivedAt_ = 0.0;
+    bool servedOnce_ = false;
+    double firstServiceTime_ = 0.0;
 };
 
 
@@ -168,7 +182,7 @@ class Server : public NodeComponent {
      * Create a server.
      * @param intervals a function without arguments to value service intervals
      */
-    explicit Server(const DblFn& intervals);
+    explicit Server(const DblFn& intervals, bool fixedService = false);
 
     /** Destroy the server and the packet it is serving. */
     ~Server() override;
@@ -206,11 +220,14 @@ class Server : public NodeComponent {
     /** Store the model time when the server became empty. */
     inline void setLastDepartureAt(double time) { lastDepartureAt_ = time; }
 
+    inline bool fixedService() const { return fixedService_; }
+
     /** Get string representation of the server object. */
     std::string toString() const override;
 
   private:
     DblFn intervals_;
+    bool fixedService_ = false;
     Packet *packet_ = nullptr;
     double lastDepartureAt_ = 0.0;
 };
@@ -359,9 +376,10 @@ Network *buildOneHopeNetwork(
         int queueCapacity);
 
 Network *buildTandemNetwork(
-    const DblFn& arrival,
+    const std::map<int,DblFn>& arrivals,
     const std::vector<DblFn>& services,
-    int queueCapacity);
+    int queueCapacity,
+    bool fixedService = false);
 
 }
 

@@ -163,9 +163,10 @@ SimData simGG1(
         int maxPackets = MAX_PACKETS);
 
 SimData simTandem(
-    DblFn arrival,
+    const std::map<int,DblFn>& arrivals,
     const std::vector<DblFn>& services,
     int queueCapacity = -1,
+    bool fixedService = false,
     int maxPackets = MAX_PACKETS);
 
 }
