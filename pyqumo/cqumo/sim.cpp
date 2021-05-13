@@ -1418,7 +1418,7 @@ static const char __pyx_k_pyqumo_sim_helpers[] = "pyqumo.sim.helpers";
 static const char __pyx_k_pyqumo_cqumo_sim_pyx[] = "pyqumo/cqumo/sim.pyx";
 static const char __pyx_k_CountableDistribution[] = "CountableDistribution";
 static const char __pyx_k_simulate_tandem_line_180[] = "simulate_tandem (line 180)";
-static const char __pyx_k_Simulate_tandem_using_C_impleme[] = "\n    Simulate tandem using C++ implementation. No cross-traffic supported.\n\n    Example\n    -------\n    >>> simulate_tandem(\n    >>>     Erlang(2, 1),\n    >>>     [Exponential(5), Exponential(6), Exponential(3)],\n    >>>     10,  # queue capacity\n    >>>     1000000)  # number of packets (1 million)\n\n    Results returned are defined in pyqumo.sim.tandem.Results.\n\n    Parameters\n    ----------\n    arrival : Distribution instance\n    services : list of Distribution instances, this list size is the number\n        of nodes in the tandem network\n    queue_capacity: int or np.inf\n    fixed_service: bool, default is False\n    max_packets:\n    ";
+static const char __pyx_k_Simulate_tandem_using_C_impleme[] = "\n    Simulate tandem using C++ implementation. No cross-traffic supported.\n\n    Example\n    -------\n    >>> simulate_tandem(\n    >>>     Erlang(2, 1),\n    >>>     [Exponential(5), Exponential(6), Exponential(3)],\n    >>>     10,  # queue capacity\n    >>>     1000000)  # number of packets (1 million)\n\n    To simulate a network, where cross-traffic arrives at stations 0, 2 and 3,\n    and network has length 5:\n\n    >>> simulate_tandem(\n    >>>     [Erlang(2, 1), None, Exponential(2), Exponential(2.3), None],\n    >>>     [Exponential(3) for _ in range(5)],\n    >>>     10,  # queue capacity\n    >>>     1000000)  # number of packets (1 million)\n\n    Results returned are defined in pyqumo.sim.tandem.Results.\n\n    Parameters\n    ----------\n    arrivals : Distribution instance, or list-like with optional Distributions\n        if list-like, non-None values should be given for nodes with external\n        traffic arrivals. When given as a single Distribution, it is assumed\n        that all traffic comes to the first node only.\n    services : list of Distribution instances, this list size is the number\n        of nodes in the tandem network\n    queue_capacity: int or np.inf\n    fixed_service: bool, default is False\n        if True, then service time is selected when the packet is served for\n        the first time, and then this service time is used all over the\n        network.\n    max_packets: int, default: 100'000\n        total number of packets (over all sources) to simulate.\n    ";
 static PyObject *__pyx_n_s_CountableDistribution;
 static PyObject *__pyx_n_s_Distribution;
 static PyObject *__pyx_n_s_Exponential;
@@ -3202,7 +3202,7 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_2simulate_gg1n(CYTHON_UNUSED PyObj
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6pyqumo_5cqumo_3sim_5simulate_tandem(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6pyqumo_5cqumo_3sim_4simulate_tandem[] = "simulate_tandem(arrivals, services, queue_capacity: int, bool fixed_service: bool = False, max_packets: int = 100000) -> TandemResults\n\n    Simulate tandem using C++ implementation. No cross-traffic supported.\n\n    Example\n    -------\n    >>> simulate_tandem(\n    >>>     Erlang(2, 1),\n    >>>     [Exponential(5), Exponential(6), Exponential(3)],\n    >>>     10,  # queue capacity\n    >>>     1000000)  # number of packets (1 million)\n\n    Results returned are defined in pyqumo.sim.tandem.Results.\n\n    Parameters\n    ----------\n    arrival : Distribution instance\n    services : list of Distribution instances, this list size is the number\n        of nodes in the tandem network\n    queue_capacity: int or np.inf\n    fixed_service: bool, default is False\n    max_packets:\n    ";
+static char __pyx_doc_6pyqumo_5cqumo_3sim_4simulate_tandem[] = "simulate_tandem(arrivals, services, queue_capacity: int, bool fixed_service: bool = False, max_packets: int = 100000) -> TandemResults\n\n    Simulate tandem using C++ implementation. No cross-traffic supported.\n\n    Example\n    -------\n    >>> simulate_tandem(\n    >>>     Erlang(2, 1),\n    >>>     [Exponential(5), Exponential(6), Exponential(3)],\n    >>>     10,  # queue capacity\n    >>>     1000000)  # number of packets (1 million)\n\n    To simulate a network, where cross-traffic arrives at stations 0, 2 and 3,\n    and network has length 5:\n\n    >>> simulate_tandem(\n    >>>     [Erlang(2, 1), None, Exponential(2), Exponential(2.3), None],\n    >>>     [Exponential(3) for _ in range(5)],\n    >>>     10,  # queue capacity\n    >>>     1000000)  # number of packets (1 million)\n\n    Results returned are defined in pyqumo.sim.tandem.Results.\n\n    Parameters\n    ----------\n    arrivals : Distribution instance, or list-like with optional Distributions\n        if list-like, non-None values should be given for nodes with external\n        traffic arrivals. When given as a single Distribution, it is assumed\n        that all traffic comes to the first node only.\n    services : list of Distribution instances, this list size is the number\n        of nodes in the tandem network\n    queue_capacity: int or np.inf\n    fixed_service: bool, default is False\n        if True, then service time is selected when the packet is served for\n        the first time, and then this service time is used all over the\n        network.\n    max_packets: int, default: 100'000\n        total number of packets (over all sources) to simulate.\n    ";
 static PyMethodDef __pyx_mdef_6pyqumo_5cqumo_3sim_5simulate_tandem = {"simulate_tandem", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6pyqumo_5cqumo_3sim_5simulate_tandem, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6pyqumo_5cqumo_3sim_4simulate_tandem};
 static PyObject *__pyx_pw_6pyqumo_5cqumo_3sim_5simulate_tandem(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_arrivals = 0;
@@ -3347,7 +3347,7 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
   __Pyx_RefNannySetupContext("simulate_tandem", 0);
   __Pyx_INCREF(__pyx_v_queue_capacity);
 
-  /* "pyqumo/cqumo/sim.pyx":210
+  /* "pyqumo/cqumo/sim.pyx":226
  *     """
  *     cdef vector[void*] pyServices
  *     cdef unsigned i = 0             # <<<<<<<<<<<<<<
@@ -3356,66 +3356,66 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
  */
   __pyx_v_i = 0;
 
-  /* "pyqumo/cqumo/sim.pyx":211
+  /* "pyqumo/cqumo/sim.pyx":227
  *     cdef vector[void*] pyServices
  *     cdef unsigned i = 0
  *     for i in range(len(services)):             # <<<<<<<<<<<<<<
  *         pyServices.push_back(<void*>services[i].rnd)
  * 
  */
-  __pyx_t_1 = PyObject_Length(__pyx_v_services); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 211, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_v_services); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 227, __pyx_L1_error)
   __pyx_t_2 = __pyx_t_1;
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "pyqumo/cqumo/sim.pyx":212
+    /* "pyqumo/cqumo/sim.pyx":228
  *     cdef unsigned i = 0
  *     for i in range(len(services)):
  *         pyServices.push_back(<void*>services[i].rnd)             # <<<<<<<<<<<<<<
  * 
  *     cdef map[int,void*] pyArrivals
  */
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_services, __pyx_v_i, unsigned int, 0, __Pyx_PyInt_From_unsigned_int, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_services, __pyx_v_i, unsigned int, 0, __Pyx_PyInt_From_unsigned_int, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 228, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_rnd); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_rnd); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 228, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     try {
       __pyx_v_pyServices.push_back(((void *)__pyx_t_5));
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 212, __pyx_L1_error)
+      __PYX_ERR(0, 228, __pyx_L1_error)
     }
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
 
-  /* "pyqumo/cqumo/sim.pyx":215
+  /* "pyqumo/cqumo/sim.pyx":231
  * 
  *     cdef map[int,void*] pyArrivals
  *     if isinstance(arrivals, Distribution):             # <<<<<<<<<<<<<<
  *         pyArrivals[0] = <void*>arrivals.rnd
  *     else:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_Distribution); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_Distribution); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 231, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = PyObject_IsInstance(__pyx_v_arrivals, __pyx_t_5); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 215, __pyx_L1_error)
+  __pyx_t_6 = PyObject_IsInstance(__pyx_v_arrivals, __pyx_t_5); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 231, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_t_7 = (__pyx_t_6 != 0);
   if (__pyx_t_7) {
 
-    /* "pyqumo/cqumo/sim.pyx":216
+    /* "pyqumo/cqumo/sim.pyx":232
  *     cdef map[int,void*] pyArrivals
  *     if isinstance(arrivals, Distribution):
  *         pyArrivals[0] = <void*>arrivals.rnd             # <<<<<<<<<<<<<<
  *     else:
  *         for i, arrival in enumerate(arrivals):
  */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_arrivals, __pyx_n_s_rnd); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 216, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_arrivals, __pyx_n_s_rnd); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 232, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     (__pyx_v_pyArrivals[0]) = ((void *)__pyx_t_5);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "pyqumo/cqumo/sim.pyx":215
+    /* "pyqumo/cqumo/sim.pyx":231
  * 
  *     cdef map[int,void*] pyArrivals
  *     if isinstance(arrivals, Distribution):             # <<<<<<<<<<<<<<
@@ -3425,7 +3425,7 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
     goto __pyx_L5;
   }
 
-  /* "pyqumo/cqumo/sim.pyx":218
+  /* "pyqumo/cqumo/sim.pyx":234
  *         pyArrivals[0] = <void*>arrivals.rnd
  *     else:
  *         for i, arrival in enumerate(arrivals):             # <<<<<<<<<<<<<<
@@ -3438,26 +3438,26 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
       __pyx_t_5 = __pyx_v_arrivals; __Pyx_INCREF(__pyx_t_5); __pyx_t_1 = 0;
       __pyx_t_8 = NULL;
     } else {
-      __pyx_t_1 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_v_arrivals); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 218, __pyx_L1_error)
+      __pyx_t_1 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_v_arrivals); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 234, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_8 = Py_TYPE(__pyx_t_5)->tp_iternext; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 218, __pyx_L1_error)
+      __pyx_t_8 = Py_TYPE(__pyx_t_5)->tp_iternext; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 234, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_8)) {
         if (likely(PyList_CheckExact(__pyx_t_5))) {
           if (__pyx_t_1 >= PyList_GET_SIZE(__pyx_t_5)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_4 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_1); __Pyx_INCREF(__pyx_t_4); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 218, __pyx_L1_error)
+          __pyx_t_4 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_1); __Pyx_INCREF(__pyx_t_4); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 234, __pyx_L1_error)
           #else
-          __pyx_t_4 = PySequence_ITEM(__pyx_t_5, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 218, __pyx_L1_error)
+          __pyx_t_4 = PySequence_ITEM(__pyx_t_5, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 234, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           #endif
         } else {
           if (__pyx_t_1 >= PyTuple_GET_SIZE(__pyx_t_5)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_1); __Pyx_INCREF(__pyx_t_4); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 218, __pyx_L1_error)
+          __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_1); __Pyx_INCREF(__pyx_t_4); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 234, __pyx_L1_error)
           #else
-          __pyx_t_4 = PySequence_ITEM(__pyx_t_5, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 218, __pyx_L1_error)
+          __pyx_t_4 = PySequence_ITEM(__pyx_t_5, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 234, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           #endif
         }
@@ -3467,7 +3467,7 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 218, __pyx_L1_error)
+            else __PYX_ERR(0, 234, __pyx_L1_error)
           }
           break;
         }
@@ -3478,7 +3478,7 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
       __pyx_v_i = __pyx_t_3;
       __pyx_t_3 = (__pyx_t_3 + 1);
 
-      /* "pyqumo/cqumo/sim.pyx":219
+      /* "pyqumo/cqumo/sim.pyx":235
  *     else:
  *         for i, arrival in enumerate(arrivals):
  *             if arrival is not None:             # <<<<<<<<<<<<<<
@@ -3489,19 +3489,19 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
       __pyx_t_6 = (__pyx_t_7 != 0);
       if (__pyx_t_6) {
 
-        /* "pyqumo/cqumo/sim.pyx":220
+        /* "pyqumo/cqumo/sim.pyx":236
  *         for i, arrival in enumerate(arrivals):
  *             if arrival is not None:
  *                 pyArrivals[i] = <void*>arrival.rnd             # <<<<<<<<<<<<<<
  * 
  *     if queue_capacity == np.inf:
  */
-        __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_arrival, __pyx_n_s_rnd); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 220, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_arrival, __pyx_n_s_rnd); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 236, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         (__pyx_v_pyArrivals[__pyx_v_i]) = ((void *)__pyx_t_4);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-        /* "pyqumo/cqumo/sim.pyx":219
+        /* "pyqumo/cqumo/sim.pyx":235
  *     else:
  *         for i, arrival in enumerate(arrivals):
  *             if arrival is not None:             # <<<<<<<<<<<<<<
@@ -3510,7 +3510,7 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
  */
       }
 
-      /* "pyqumo/cqumo/sim.pyx":218
+      /* "pyqumo/cqumo/sim.pyx":234
  *         pyArrivals[0] = <void*>arrivals.rnd
  *     else:
  *         for i, arrival in enumerate(arrivals):             # <<<<<<<<<<<<<<
@@ -3522,25 +3522,25 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
   }
   __pyx_L5:;
 
-  /* "pyqumo/cqumo/sim.pyx":222
+  /* "pyqumo/cqumo/sim.pyx":238
  *                 pyArrivals[i] = <void*>arrival.rnd
  * 
  *     if queue_capacity == np.inf:             # <<<<<<<<<<<<<<
  *         queue_capacity = -1
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 222, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_inf); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 222, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_inf); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyObject_RichCompare(__pyx_v_queue_capacity, __pyx_t_4, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 222, __pyx_L1_error)
+  __pyx_t_5 = PyObject_RichCompare(__pyx_v_queue_capacity, __pyx_t_4, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 222, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   if (__pyx_t_6) {
 
-    /* "pyqumo/cqumo/sim.pyx":223
+    /* "pyqumo/cqumo/sim.pyx":239
  * 
  *     if queue_capacity == np.inf:
  *         queue_capacity = -1             # <<<<<<<<<<<<<<
@@ -3550,7 +3550,7 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
     __Pyx_INCREF(__pyx_int_neg_1);
     __Pyx_DECREF_SET(__pyx_v_queue_capacity, __pyx_int_neg_1);
 
-    /* "pyqumo/cqumo/sim.pyx":222
+    /* "pyqumo/cqumo/sim.pyx":238
  *                 pyArrivals[i] = <void*>arrival.rnd
  * 
  *     if queue_capacity == np.inf:             # <<<<<<<<<<<<<<
@@ -3559,29 +3559,29 @@ static PyObject *__pyx_pf_6pyqumo_5cqumo_3sim_4simulate_tandem(CYTHON_UNUSED PyO
  */
   }
 
-  /* "pyqumo/cqumo/sim.pyx":225
+  /* "pyqumo/cqumo/sim.pyx":241
  *         queue_capacity = -1
  * 
  *     return call_simTandem(pyArrivals, pyServices, queue_capacity,             # <<<<<<<<<<<<<<
  *                           fixed_service, max_packets)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_v_queue_capacity); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
+  __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_v_queue_capacity); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 241, __pyx_L1_error)
 
-  /* "pyqumo/cqumo/sim.pyx":226
+  /* "pyqumo/cqumo/sim.pyx":242
  * 
  *     return call_simTandem(pyArrivals, pyServices, queue_capacity,
  *                           fixed_service, max_packets)             # <<<<<<<<<<<<<<
  */
-  __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_v_max_packets); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 226, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_v_max_packets); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L1_error)
 
-  /* "pyqumo/cqumo/sim.pyx":225
+  /* "pyqumo/cqumo/sim.pyx":241
  *         queue_capacity = -1
  * 
  *     return call_simTandem(pyArrivals, pyServices, queue_capacity,             # <<<<<<<<<<<<<<
  *                           fixed_service, max_packets)
  */
-  __pyx_t_5 = __pyx_f_6pyqumo_5cqumo_3sim_call_simTandem(__pyx_v_pyArrivals, __pyx_v_pyServices, __pyx_t_9, __pyx_v_fixed_service, __pyx_t_10); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 225, __pyx_L1_error)
+  __pyx_t_5 = __pyx_f_6pyqumo_5cqumo_3sim_call_simTandem(__pyx_v_pyArrivals, __pyx_v_pyServices, __pyx_t_9, __pyx_v_fixed_service, __pyx_t_10); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 241, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
@@ -3721,7 +3721,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 18, __pyx_L1_error)
-  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 218, __pyx_L1_error)
+  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 234, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
