@@ -16,6 +16,7 @@ def get_skewness(m1: float, m2: float, m3: float) -> float:
     """Compute skewness.
     """
     var = m2 - m1**2
+    assert (var > 0), "var must be positive"
     std = var**0.5
     return (m3 - 3*m1*var - m1**3) / (var * std)
 
